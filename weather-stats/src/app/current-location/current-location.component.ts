@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CurrentLocationService } from '../shared/services/current-location.service';
 
 @Component({
   selector: 'app-current-location',
@@ -7,9 +8,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CurrentLocationComponent implements OnInit {
 
-  constructor() { }
+  latitude: any;
+  longitude: any;
+
+  constructor(
+    private currentLocationService: CurrentLocationService
+  ) { }
 
   ngOnInit(): void {
+    this.currentLocationService.getData().subscribe((response: any) => {
+      console.log(JSON.stringify(response));
+      this.latitude = response.latitude;
+      this.longitude = response.longitude;
+    });
   }
 
 }
