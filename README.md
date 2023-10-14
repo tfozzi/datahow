@@ -1,2 +1,0 @@
-# datahow
-DataHow code challenge
