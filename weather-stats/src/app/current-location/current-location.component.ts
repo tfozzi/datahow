@@ -10,6 +10,7 @@ export class CurrentLocationComponent implements OnInit {
 
   latitude: any;
   longitude: any;
+  city: any;
 
   constructor(
     private currentLocationService: CurrentLocationService
@@ -20,6 +21,7 @@ export class CurrentLocationComponent implements OnInit {
       console.log(JSON.stringify(response));
       this.latitude = response.latitude;
       this.longitude = response.longitude;
+      this.city = response.city;
     });
   }
 

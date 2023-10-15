@@ -10,7 +10,7 @@ export class HeaderComponent implements OnInit {
   appName: string;
 
   constructor() {
-    this.appName = "Weather"
+    this.appName = "Weather Report"
    }
 
   ngOnInit(): void {
