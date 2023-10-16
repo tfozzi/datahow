@@ -7,6 +7,8 @@ const X_AXIS_THICKNESS = 3.0; // em units
 const Y_AXIS_THICKNESS = 3.0; // em units
 const CHART_HEIGHT = 20; // em units
 
+const N_DAYS_MOVING_AVE = 5;
+
 @Component({
   selector: 'app-temperature-trend',
   templateUrl: './temperature-trend.component.html',
@@ -16,9 +18,11 @@ export class TemperatureTrendComponent implements OnInit {
 
   @ViewChild('chart') chartContainer!: ElementRef;
 
-  times: string[] = [];
-  temperatures: string[] = [];
+  times: any[] = [];
+  temperatures: number[] = [];
+  aveTemperatures: number[] = [];
   points: any;
+  avePoints: any;
   connectionError: boolean;
   connectionErrorMessage: any;
 
@@ -30,6 +34,7 @@ export class TemperatureTrendComponent implements OnInit {
   xScale: any;
   yScale: any;
   trendPath: any;
+  avePath: any;
   chartDefaultFontSize: any;
   chartSvgWidth: any;
   chartSvgHeight: any;
@@ -71,6 +76,7 @@ export class TemperatureTrendComponent implements OnInit {
     this.yAxis = d3.select(this.chartContainer.nativeElement).select('#yaxis');
     this.plotArea = d3.select(this.chartContainer.nativeElement).select('#plotarea');
     this.trendPath = d3.select(this.chartContainer.nativeElement).select('#trendpath');
+    this.avePath = d3.select(this.chartContainer.nativeElement).select('#avepath');
 
     // layout
     this.chartDefaultFontSize = 16;
@@ -95,10 +101,19 @@ export class TemperatureTrendComponent implements OnInit {
   plot() {
     this.temperaturesService.getData().subscribe({
       next: (data: any) => {
+        // prepare data
         this.times = data.hourly.time;
         this.temperatures = data.hourly.temperature_2m;
-        
-
+        // calculate moving averages
+        let n_hours_average = N_DAYS_MOVING_AVE * 24;
+        for (let i=0; i<this.temperatures.length; i++) {
+          if (i < n_hours_average) {
+            this.aveTemperatures[i] = this.temperatures.slice(0,i+1).reduce((acc, curr) => acc + curr, 0) / (i+1);
+          }
+          else {
+            this.aveTemperatures[i] = this.temperatures.slice(i+1-n_hours_average,i+1).reduce((acc, curr) => acc + curr, 0) / (n_hours_average);
+          }
+        }
         // update scales
         const minTemp = d3.min(this.temperatures);
         const maxTemp = d3.max(this.temperatures);
@@ -128,12 +143,18 @@ export class TemperatureTrendComponent implements OnInit {
             .ticks(yTicks)          
         );
 
-        // draw trend
+        // draw trends
         this.points = this.times.map((v: any, i: number) => {
           return {x: this.xScale(new Date(v)), y: this.yScale(this.temperatures[i])}
         });
         this.trendPath
         .attr('d', this.lineFunction(this.points));
+
+        this.avePoints = this.times.map((v: any, i: number) => {
+          return {x: this.xScale(new Date(v)), y: this.yScale(this.aveTemperatures[i])}
+        });
+        this.avePath
+        .attr('d', this.lineFunction(this.avePoints));
 
       },
       error: (e) => {
