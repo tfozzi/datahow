@@ -2,14 +2,21 @@
     <h4 class="text-secondary p-2">
         Current Location
     </h4>
-    <div class="p-2">
-        City: {{city}}
-    </div>
-    <div class="p-2">
-        Latitude: {{latitude}}
-    </div>
-    <div class="p-2">
-        Longitude: {{longitude}} 
-    </div>
+    <ng-container *ngIf="dataError">
+        <div class="p-2">
+            ERROR: {{errorMessage}}
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!dataError">
+        <div class="p-2">
+            City: {{city}}
+        </div>
+        <div class="p-2">
+            Latitude: {{latitude}}
+        </div>
+        <div class="p-2">
+            Longitude: {{longitude}} 
+        </div>
+    </ng-container> 
 
 </div>

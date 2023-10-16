@@ -11,15 +11,25 @@ export class CurrentLocationComponent implements OnInit {
   latitude: any;
   longitude: any;
   city: any;
+  dataError: boolean;
+  errorMessage: any;
 
   constructor(
     private currentLocationService: CurrentLocationService
-  ) { }
+  ) { 
+    this.dataError = false;
+  }
 
   ngOnInit(): void {
-    this.latitude = this.currentLocationService.latitude;
-    this.longitude = this.currentLocationService.longitude;
-    this.city = this.currentLocationService.city;
+    if (this.currentLocationService.error) {
+      this.dataError = true;
+      this.errorMessage = this.currentLocationService.errorMessage;
+    }
+    else {
+      this.latitude = this.currentLocationService.latitude;
+      this.longitude = this.currentLocationService.longitude;
+      this.city = this.currentLocationService.city;
+    }
   }
 
 }
