@@ -17,12 +17,9 @@ export class CurrentLocationComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.currentLocationService.getData().subscribe((response: any) => {
-      console.log(JSON.stringify(response));
-      this.latitude = response.latitude;
-      this.longitude = response.longitude;
-      this.city = response.city;
-    });
+    this.latitude = this.currentLocationService.latitude;
+    this.longitude = this.currentLocationService.longitude;
+    this.city = this.currentLocationService.city;
   }
 
 }

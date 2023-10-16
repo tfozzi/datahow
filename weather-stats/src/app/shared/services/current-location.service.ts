@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
 const API_URL = "https://ipgeolocation.abstractapi.com/v1/?api_key=1e8a3b3ddfa84e3eb50c3833eaabcb98";
 
@@ -9,12 +8,24 @@ const API_URL = "https://ipgeolocation.abstractapi.com/v1/?api_key=1e8a3b3ddfa84
 })
 export class CurrentLocationService {
 
+  latitude: any;
+  longitude: any;
+  city: any;
+
   constructor(
     private http: HttpClient
   ) {
    }
 
-  getData(){
-    return this.http.get(API_URL);
+  init(){
+    return new Promise<void>((resolve, reject) => {
+      this.http.get(API_URL).subscribe((data: any) => {
+        this.latitude = data.latitude;
+        this.longitude = data.longitude;
+        this.city = data.city;
+        resolve();
+      });
+    })
+    
   }
 }

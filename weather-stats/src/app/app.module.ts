@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -9,11 +9,19 @@ import { CurrentLocationComponent } from './current-location/current-location.co
 import { TemperatureTrendComponent } from './temperature-trend/temperature-trend.component';
 import { TemperatureAveragesComponent } from './temperature-averages/temperature-averages.component';
 import { PrecipitationTrendComponent } from './precipitation-trend/precipitation-trend.component';
+import { CurrentLocationService } from './shared/services/current-location.service';
+
+export function loadLocation(currentLocationService: CurrentLocationService) {
+  return (): Promise<any> => {
+    return currentLocationService.init();
+  }
+  
+}
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
+    HeaderComponent, 
     CurrentLocationComponent,
     TemperatureTrendComponent,
     TemperatureAveragesComponent,
@@ -24,7 +32,14 @@ import { PrecipitationTrendComponent } from './precipitation-trend/precipitation
     BrowserModule,
     NgbModule
   ],
-  providers: [],
+  providers: [
+    { 
+      provide: APP_INITIALIZER,
+      useFactory: loadLocation,
+      deps: [CurrentLocationService],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
