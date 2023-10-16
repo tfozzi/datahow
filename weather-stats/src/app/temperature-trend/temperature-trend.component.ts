@@ -19,6 +19,8 @@ export class TemperatureTrendComponent implements OnInit {
   times: string[] = [];
   temperatures: string[] = [];
   points: any;
+  connectionError: boolean;
+  connectionErrorMessage: any;
 
   chartSvg: any;
   xAxis: any;
@@ -40,9 +42,12 @@ export class TemperatureTrendComponent implements OnInit {
 
   constructor(
     private temperaturesService: TemperaturesService
-  ) { }
+  ) {
+    this.connectionError = false;
+   }
 
   ngOnInit(): void {
+    this.connectionError = false;
   }
 
   ngAfterViewInit() {
@@ -88,47 +93,53 @@ export class TemperatureTrendComponent implements OnInit {
   }
 
   plot() {
-    this.temperaturesService.getData().subscribe((data: any) => {
-      this.times = data.hourly.time;
-      this.temperatures = data.hourly.temperature_2m;
-      
+    this.temperaturesService.getData().subscribe({
+      next: (data: any) => {
+        this.times = data.hourly.time;
+        this.temperatures = data.hourly.temperature_2m;
+        
 
-      // update scales
-      const minTemp = d3.min(this.temperatures);
-      const maxTemp = d3.max(this.temperatures);
+        // update scales
+        const minTemp = d3.min(this.temperatures);
+        const maxTemp = d3.max(this.temperatures);
 
-      this.xScale = d3.scaleTime()
-      .domain([new Date(this.times[0]), new Date(this.times[this.times.length-1]) ])
-      .range([this.chartMargin + this.yAxisWidth, this.chartMargin + this.yAxisWidth + this.plotAreaWidth ]);
-      this.yScale = d3.scaleLinear()
-      .domain([ Number(minTemp), Number(maxTemp) ])
-      .range([this.plotAreaHeight + this.chartMargin, this.chartMargin ]); // leave a small margin for y
+        this.xScale = d3.scaleTime()
+        .domain([new Date(this.times[0]), new Date(this.times[this.times.length-1]) ])
+        .range([this.chartMargin + this.yAxisWidth, this.chartMargin + this.yAxisWidth + this.plotAreaWidth ]);
+        this.yScale = d3.scaleLinear()
+        .domain([ Number(minTemp), Number(maxTemp) ])
+        .range([this.plotAreaHeight + this.chartMargin, this.chartMargin ]); // leave a small margin for y
 
-      // draw axes with updated scales
-      let xTicks = this.plotAreaWidth /
-      (5 * this.chartDefaultFontSize);
-      this.xAxis
-      .attr("transform", "translate(0, " + (this.plotAreaHeight + this.chartMargin) + ")")
-      .call(
-        d3.axisBottom(this.xScale)
-          .ticks(xTicks)
-      );
+        // draw axes with updated scales
+        let xTicks = this.plotAreaWidth /
+        (5 * this.chartDefaultFontSize);
+        this.xAxis
+        .attr("transform", "translate(0, " + (this.plotAreaHeight + this.chartMargin) + ")")
+        .call(
+          d3.axisBottom(this.xScale)
+            .ticks(xTicks)
+        );
 
-      let yTicks = 5;
-      this.yAxis
-      .attr("transform", "translate(" + (this.chartMargin + this.yAxisWidth) + ", 0)")
-      .call(
-        d3.axisLeft(this.yScale)
-          .ticks(yTicks)          
-      );
+        let yTicks = 5;
+        this.yAxis
+        .attr("transform", "translate(" + (this.chartMargin + this.yAxisWidth) + ", 0)")
+        .call(
+          d3.axisLeft(this.yScale)
+            .ticks(yTicks)          
+        );
 
-      // draw trend
-      this.points = this.times.map((v: any, i: number) => {
-        return {x: this.xScale(new Date(v)), y: this.yScale(this.temperatures[i])}
-      });
-      this.trendPath
-      .attr('d', this.lineFunction(this.points));
+        // draw trend
+        this.points = this.times.map((v: any, i: number) => {
+          return {x: this.xScale(new Date(v)), y: this.yScale(this.temperatures[i])}
+        });
+        this.trendPath
+        .attr('d', this.lineFunction(this.points));
 
+      },
+      error: (e) => {
+        this.connectionError = true;
+        this.connectionErrorMessage = JSON.stringify(e.message);
+      }
     });
 
     

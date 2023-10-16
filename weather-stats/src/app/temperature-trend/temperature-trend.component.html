@@ -2,20 +2,27 @@
     <h4 class="text-secondary p-2">
         Temperatures
     </h4>
-    <div #chart id="temperatures-chart">
-        <svg
-            width="100%"
-            height="100%"
-        >
-            <g #yaxis id="yaxis"></g>
-            <g #xaxis id="xaxis"></g>
-            <g #plotarea>
-                <path #trendpath
-                    id="trendpath"
-                    class="trendpath"
-                ></path>
-            </g>
-        </svg>
-    </div>
+    <ng-container *ngIf="connectionError">
+        <div class="p-2">
+            ERROR: {{connectionErrorMessage}}
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!connectionError">
+        <div #chart id="temperatures-chart">
+            <svg
+                width="100%"
+                height="100%"
+            >
+                <g #yaxis id="yaxis"></g>
+                <g #xaxis id="xaxis"></g>
+                <g #plotarea>
+                    <path #trendpath
+                        id="trendpath"
+                        class="trendpath"
+                    ></path>
+                </g>
+            </svg>
+        </div>
+    </ng-container>
 
 </div>
