@@ -7,7 +7,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderComponent } from './header/header.component';
 import { CurrentLocationComponent } from './current-location/current-location.component';
 import { TemperatureTrendComponent } from './temperature-trend/temperature-trend.component';
-import { TemperatureAveragesComponent } from './temperature-averages/temperature-averages.component';
 import { PrecipitationTrendComponent } from './precipitation-trend/precipitation-trend.component';
 import { CurrentLocationService } from './shared/services/current-location.service';
 
@@ -24,7 +23,6 @@ export function loadLocation(currentLocationService: CurrentLocationService) {
     HeaderComponent, 
     CurrentLocationComponent,
     TemperatureTrendComponent,
-    TemperatureAveragesComponent,
     PrecipitationTrendComponent
   ],
   imports: [
