@@ -9,6 +9,7 @@ import { CurrentLocationComponent } from './current-location/current-location.co
 import { TemperatureTrendComponent } from './temperature-trend/temperature-trend.component';
 import { PrecipitationTrendComponent } from './precipitation-trend/precipitation-trend.component';
 import { CurrentLocationService } from './shared/services/current-location.service';
+import { TempErrorBarsComponent } from './temp-error-bars/temp-error-bars.component';
 
 export function loadLocation(currentLocationService: CurrentLocationService) {
   return (): Promise<any> => {
@@ -23,7 +24,8 @@ export function loadLocation(currentLocationService: CurrentLocationService) {
     HeaderComponent, 
     CurrentLocationComponent,
     TemperatureTrendComponent,
-    PrecipitationTrendComponent
+    PrecipitationTrendComponent,
+    TempErrorBarsComponent
   ],
   imports: [
     HttpClientModule,
